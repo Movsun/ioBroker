@@ -1,5 +1,18 @@
 # Changelog for Linux-Fixer-Script
 
+## 2020-01-13
+* The `shutdown` command is no longer limited to `-h now`
+* (bluefox) The following services are now started before ioBroker if possible:
+    * Influx DB
+    * MySQL Server
+    * Maria DB
+
+## 2019-11-29
+* Add user to `video` group (Linux)
+
+## 2019-11-26
+* (ADOE) Extracted many shared Installer/Fixer functions into a common library script
+
 ## 2019-11-10
 * FreeBSD should now finally be supported correctly
 

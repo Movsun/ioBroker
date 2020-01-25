@@ -1,7 +1,7 @@
 # ------------------------------
-# Increase this version number whenever you update the fixer
+# Increase this version number whenever you update the lib
 # ------------------------------
-LIBRARY_VERSION="2020-01-13" # format YYYY-MM-DD
+LIBRARY_VERSION="2020-01-25" # format YYYY-MM-DD
 
 # ------------------------------
 # Supported and suggested node versions
@@ -352,6 +352,28 @@ set_npm_python() {
 		# Append the line to change the python binary
 		append_to_file "# change link from python3 to python2.7 (needed for gyp)" .npmrc
 		append_to_file "python=/usr/local/bin/python2.7" .npmrc
+	fi
+	# Make sure that npm can access the .npmrc
+	if [ "$HOST_PLATFORM" = "osx" ]; then
+		$SUDOX chown -R $USER .npmrc
+	else
+		$SUDOX chown -R $USER:$USER_GROUP .npmrc
+	fi
+}
+
+force_strict_npm_version_checks() {
+	# Make sure the npmrc file exists
+	$SUDOX touch .npmrc
+	# If .npmrc does not contain "engine-strict=true", we need to change it
+	$SUDOX grep -q -E "^engine-strict=true" .npmrc &> /dev/null
+	if [ $? -ne 0 ]; then
+		# Remember its contents (minus any possible engine-strict=false)
+		NPMRC_FILE=$($SUDOX grep -v -E "^engine-strict=false" .npmrc)
+		# And write it back
+		write_to_file "$NPMRC_FILE" .npmrc
+		# Append the line to force strict version checks
+		append_to_file "# force strict version checks" .npmrc
+		append_to_file "engine-strict=true" .npmrc
 	fi
 	# Make sure that npm can access the .npmrc
 	if [ "$HOST_PLATFORM" = "osx" ]; then
